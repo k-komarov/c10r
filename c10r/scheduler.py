@@ -15,8 +15,9 @@ class Scheduler:
         self._config = self._read_config(kwargs.get('config', CONFIG_PATH))
         self._scheduler = sched.scheduler(time.time, time.sleep)
         self._template_resources = self._parse_template_configs(kwargs.get('confd', CONFD_PATH))
-        logging.basicConfig(filename=self._config['scheduler']['logfile'], format='%(asctime)s %(message)s')
-        logging.info('C10r scheduler started')
+        logging.basicConfig(filename=self._config['scheduler']['logfile'], format='%(asctime)s %(message)s',
+                            level=logging.INFO)
+        logging.info('Running C10r...')
 
     def _read_config(self, location):
         config = configparser.ConfigParser(interpolation=None)
@@ -37,7 +38,7 @@ class Scheduler:
         return template_resources
 
     def _run_forever(self):
-        logging.info("Syncing resources")
+        logging.info(f"Syncing resources: {len(self._template_resources)}")
         for template_resource in self._template_resources:
             template_resource.sync()
         self._scheduler.enter(int(self._config['scheduler']['interval']), 1, self._run_forever)

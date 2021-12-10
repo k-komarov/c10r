@@ -41,6 +41,7 @@ class TemplateFile:
             logging.info("Pruned: %s", self._file)
 
     def sync(self):
+        logging.info(f"Syncing template: {self._file}")
         self._prune()
         self._write()
 
