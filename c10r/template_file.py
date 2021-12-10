@@ -1,3 +1,4 @@
+import logging
 import os
 from string import Template
 
@@ -32,10 +33,12 @@ class TemplateFile:
         if self._write_required:
             self._file.write_text(self._template)
             os.utime(self._file, (self._mtime, self._mtime))
+            logging.info("Created: %s", self._file)
 
     def _prune(self):
         if self._prune_required:
             self._file.unlink()
+            logging.info("Pruned: %s", self._file)
 
     def sync(self):
         self._prune()

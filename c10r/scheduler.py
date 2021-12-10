@@ -2,9 +2,9 @@
 import time
 import sched
 import configparser
+import logging
 from pathlib import Path
 from template_resource import TemplateResource
-
 
 CONFIG_PATH = Path.joinpath(Path(__file__).parent.resolve(), '../c10r.cfg')
 CONFD_PATH = Path.joinpath(Path(__file__).parent.resolve(), '../conf.d')
@@ -15,6 +15,8 @@ class Scheduler:
         self._config = self._read_config(kwargs.get('config', CONFIG_PATH))
         self._scheduler = sched.scheduler(time.time, time.sleep)
         self._template_resources = self._parse_template_configs(kwargs.get('confd', CONFD_PATH))
+        logging.basicConfig(filename=self._config['scheduler']['logfile'], format='%(asctime)s %(message)s')
+        logging.info('C10r scheduler started')
 
     def _read_config(self, location):
         config = configparser.ConfigParser(interpolation=None)
@@ -35,6 +37,7 @@ class Scheduler:
         return template_resources
 
     def _run_forever(self):
+        logging.info("Syncing resources")
         for template_resource in self._template_resources:
             template_resource.sync()
         self._scheduler.enter(int(self._config['scheduler']['interval']), 1, self._run_forever)
