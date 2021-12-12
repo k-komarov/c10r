@@ -1,0 +1,18 @@
+[logger]
+level = "DEBUG"
+file = "MDMessageCmd.log"
+
+[mysql]
+host = "127.0.0.1"
+port = "3306"
+db = "domains"
+user = "root"
+password = "password"
+
+[domains]
+# Domain should have CNAME record pointing to this domain
+cname_target = "example.com"
+select_domain_query = "SELECT `subdomain` FROM `domains` WHERE LOWER(`subdomain`) = '%s'"
+update_https_query = "UPDATE `domains` SET `https` = '%s' WHERE LOWER(`subdomain`) = '%s'"
+
+
